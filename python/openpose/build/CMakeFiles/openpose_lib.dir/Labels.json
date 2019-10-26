@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/Users/qvel/Documents/jphack/openpose/build/CMakeFiles/openpose_lib"
+		},
+		{
+			"file" : "/Users/qvel/Documents/jphack/openpose/build/CMakeFiles/openpose_lib.rule"
+		},
+		{
+			"file" : "/Users/qvel/Documents/jphack/openpose/build/CMakeFiles/openpose_lib-complete.rule"
+		},
+		{
+			"file" : "/Users/qvel/Documents/jphack/openpose/build/caffe/src/openpose_lib-stamp/openpose_lib-install.rule"
+		},
+		{
+			"file" : "/Users/qvel/Documents/jphack/openpose/build/caffe/src/openpose_lib-stamp/openpose_lib-mkdir.rule"
+		},
+		{
+			"file" : "/Users/qvel/Documents/jphack/openpose/build/caffe/src/openpose_lib-stamp/openpose_lib-download.rule"
+		},
+		{
+			"file" : "/Users/qvel/Documents/jphack/openpose/build/caffe/src/openpose_lib-stamp/openpose_lib-update.rule"
+		},
+		{
+			"file" : "/Users/qvel/Documents/jphack/openpose/build/caffe/src/openpose_lib-stamp/openpose_lib-patch.rule"
+		},
+		{
+			"file" : "/Users/qvel/Documents/jphack/openpose/build/caffe/src/openpose_lib-stamp/openpose_lib-configure.rule"
+		},
+		{
+			"file" : "/Users/qvel/Documents/jphack/openpose/build/caffe/src/openpose_lib-stamp/openpose_lib-build.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"openpose_lib"
+		],
+		"name" : "openpose_lib"
+	}
+}
