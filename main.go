@@ -4,17 +4,19 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"mime/multipart"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 
-	"github.com/google/uuid"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
@@ -48,14 +50,21 @@ func main() {
 			c.String(http.StatusBadRequest, fmt.Sprint(url))
 			return
 		}
-		c.Request.URL.Path = "/test"
+		rand.Seed(time.Now().UnixNano())
+		c.Request.URL.Path = "/hametsu"
+		if rand.Int()%5 != 0 {
+			c.Request.URL.Path = "/not-hametsu"
+		}
 		c.Request.Method = http.MethodGet
 		r.HandleContext(c)
 
 	})
 
-	r.GET("/test", func(c *gin.Context) {
+	r.GET("/hametsu", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "hametsu.tmpl", nil)
+	})
+	r.GET("/not-hametsu", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "not-hametsu.tmpl", nil)
 	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
@@ -85,7 +94,7 @@ func sendImge2s3(file *multipart.File, fileName string) (string, error) {
 	uuid := uuid.New().String()
 	uploadOut, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(bucket),
-		Key:    aws.String(fmt.Sprintf("%s.jpg",uuid)),
+		Key:    aws.String(fmt.Sprintf("%s.jpg", uuid)),
 		Body:   *file,
 		ACL:    &acl,
 	})
