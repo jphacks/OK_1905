@@ -1,0 +1,6 @@
+# Hashes of file build rules.
+8fc494fa30c6f319029a6c324128c49c CMakeFiles/lint
+34153d2ab311bfec65615548026cd45e CMakeFiles/symlink_to_build
+03b65755725feafb96da8a482f309601 CMakeFiles/uninstall
+8e1566a21444432eb4ed2f1a9b5148d3 include/caffe/proto/caffe.pb.cc
+1d5e5943a6c15f43fcfce54f325ff565 src/caffe/test/CMakeFiles/runtest
