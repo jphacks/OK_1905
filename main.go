@@ -21,10 +21,12 @@ import (
 )
 
 const bucket string = "jogo-jphack2019"
+const base string = "https://jogo-jphack2019.s3.amazonaws.com"
 
 func main() {
 	r := gin.Default()
 	urls := make(map[string]string)
+	r.Static("/assets", "./assets")
 	r.LoadHTMLGlob("templates/*.tmpl")
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "post_file.tmpl", gin.H{
@@ -44,7 +46,7 @@ func main() {
 		}
 
 		//err = copyFileToHogejpg(&file)
-		url,uuid, err := sendImge2s3(&file, file_header.Filename)
+		url, uuid, err := sendImge2s3(&file, file_header.Filename)
 
 		if err != nil {
 			log.Println(err)
@@ -57,23 +59,30 @@ func main() {
 		if rand.Int()%5 != 0 {
 			c.Request.URL.Path = "/not-hametsu"
 		}
-		urls[uuid] = "https://jogo-jphack2019.s3.amazonaws.com/F6DFD9C8-E6D2-4DB4-AEB5-8E9C5925F504.jpeg"
+		urls[uuid] = fmt.Sprintf("%s/%s.jpg", base, uuid)
 		c.Request.Method = http.MethodGet
 		tmpURL := c.Request.URL.Query()
-		tmpURL.Set("uuid",uuid)
+		tmpURL.Set("uuid", uuid)
 		c.Request.URL.RawQuery = tmpURL.Encode()
 		r.HandleContext(c)
 
 	})
 
 	r.GET("/hametsu", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "hametsu.tmpl", nil)
+		urlUUID := c.Query("uuid")
+		c.HTML(http.StatusOK, "not-hametsu.tmpl", gin.H{
+			"s3url":   urls[urlUUID],
+			"title":   "hametsu",
+			"hametsu": "破滅",
+		})
 	})
 	r.GET("/not-hametsu", func(c *gin.Context) {
-			log.Print(urls["jogo"])
-			urlUUID := c.Query("uuid")
-			c.HTML(http.StatusOK, "not-hametsu.tmpl", gin.H{
-				"s3url":urls[urlUUID],
+		log.Print(urls["jogo"])
+		urlUUID := c.Query("uuid")
+		c.HTML(http.StatusOK, "not-hametsu.tmpl", gin.H{
+			"s3url":   urls[urlUUID],
+			"title":   "not hametsu",
+			"hametsu": "not 破",
 		})
 	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
@@ -94,10 +103,10 @@ func copyFileToHogejpg(file *multipart.File) error {
 
 }
 
-func sendImge2s3(file *multipart.File, fileName string) (string,string, error) {
+func sendImge2s3(file *multipart.File, fileName string) (string, string, error) {
 	sess, err := createNewAWSsession()
 	if err != nil {
-		return "", "",errors.Wrap(err, "not send...")
+		return "", "", errors.Wrap(err, "not send...")
 	}
 	uploader := s3manager.NewUploader(sess)
 	acl := "public-read"
@@ -109,7 +118,7 @@ func sendImge2s3(file *multipart.File, fileName string) (string,string, error) {
 		ACL:    &acl,
 	})
 
-	return uploadOut.UploadID, uuid,nil
+	return uploadOut.UploadID, uuid, nil
 }
 
 //CreateNewAWSsession is constracotr

@@ -1,0 +1,11 @@
+/* 幅に対して、高さは自動調整の場合 */
+img{
+    width: 200px;
+    height: auto;
+  }
+  
+  /* 高さに対して、幅は自動調整の場合 */
+  img{
+    width: auto;
+    height: 200px;
+  }
