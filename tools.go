@@ -7,9 +7,11 @@ package tools
 // tool dependencies
 import (
 	_ "github.com/izumin5210/gex/cmd/gex"
+	_ "github.com/pressly/sup/cmd/sup"
 )
 
 // If you want to use tools, please run the following command:
 //  go generate ./tools.go
 //
 //go:generate go build -v -o=./bin/gex github.com/izumin5210/gex/cmd/gex
+//go:generate go build -v -o=./bin/sup github.com/pressly/sup/cmd/sup
