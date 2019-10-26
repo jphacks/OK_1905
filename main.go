@@ -13,7 +13,7 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.LoadHTMLGlob("go/templates/*.tmpl")
+	r.LoadHTMLGlob("templates/*.tmpl")
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "post_file.tmpl", gin.H{
 			"a": "jogo",
