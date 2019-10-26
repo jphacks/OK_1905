@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+    "log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,6 +14,14 @@ func main() {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
 			"a": "jogo",
 		})
+	})
+   
+	r.POST("/upload", func(c *gin.Context){
+
+		file, _ := c.FormFile("file")
+		log.Println(file.Filename)
+		
+		c.String(http.StatusOK, "hoge")
 	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
