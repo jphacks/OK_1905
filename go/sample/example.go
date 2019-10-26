@@ -22,6 +22,7 @@ func main() {
 
 	r.POST("/upload", func(c *gin.Context) {
 
+
 		file_header, _ := c.FormFile("hametsu_image")
 		log.Println(file_header.Filename)
 		file, err := file_header.Open()
@@ -30,6 +31,7 @@ func main() {
 			c.String(http.StatusBadRequest, "foo")
 			return
 		}
+
 
 		err = uploadS3(&file)
 
