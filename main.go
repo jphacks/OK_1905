@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 
+	"github.com/google/uuid"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 )
@@ -81,9 +82,10 @@ func sendImge2s3(file *multipart.File, fileName string) (string, error) {
 	}
 	uploader := s3manager.NewUploader(sess)
 	acl := "public-read"
+	uuid := uuid.New().String()
 	uploadOut, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(bucket),
-		Key:    aws.String(fileName),
+		Key:    aws.String(fmt.Sprintf("%s.jpg",uuid)),
 		Body:   *file,
 		ACL:    &acl,
 	})
