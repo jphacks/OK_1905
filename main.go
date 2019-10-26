@@ -71,10 +71,12 @@ func sendImge2s3(file *multipart.File,fileName string) (string, error) {
 		return "", errors.Wrap(err, "not send...")
 	}
 	uploader := s3manager.NewUploader(sess)
+	acl := "public-read"
 	uploadOut, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(bucket),
 		Key: aws.String(fileName),
 		Body: *file,
+		ACL: &acl,
 	})
 
 	return uploadOut.UploadID, nil
