@@ -24,6 +24,7 @@ const bucket string = "jogo-jphack2019"
 
 func main() {
 	r := gin.Default()
+	urls := make(map[string]string)
 	r.LoadHTMLGlob("templates/*.tmpl")
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "post_file.tmpl", gin.H{
@@ -43,7 +44,7 @@ func main() {
 		}
 
 		//err = copyFileToHogejpg(&file)
-		url, err := sendImge2s3(&file, file_header.Filename)
+		url,uuid, err := sendImge2s3(&file, file_header.Filename)
 
 		if err != nil {
 			log.Println(err)
@@ -52,10 +53,15 @@ func main() {
 		}
 		rand.Seed(time.Now().UnixNano())
 		c.Request.URL.Path = "/hametsu"
+		//c.Set("S3URL","https://jogo-jphack2019.s3.amazonaws.com/F6DFD9C8-E6D2-4DB4-AEB5-8E9C5925F504.jpeg")
 		if rand.Int()%5 != 0 {
 			c.Request.URL.Path = "/not-hametsu"
 		}
+		urls[uuid] = "https://jogo-jphack2019.s3.amazonaws.com/F6DFD9C8-E6D2-4DB4-AEB5-8E9C5925F504.jpeg"
 		c.Request.Method = http.MethodGet
+		tmpURL := c.Request.URL.Query()
+		tmpURL.Set("uuid",uuid)
+		c.Request.URL.RawQuery = tmpURL.Encode()
 		r.HandleContext(c)
 
 	})
@@ -64,7 +70,11 @@ func main() {
 		c.HTML(http.StatusOK, "hametsu.tmpl", nil)
 	})
 	r.GET("/not-hametsu", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "not-hametsu.tmpl", nil)
+			log.Print(urls["jogo"])
+			urlUUID := c.Query("uuid")
+			c.HTML(http.StatusOK, "not-hametsu.tmpl", gin.H{
+				"s3url":urls[urlUUID],
+		})
 	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
@@ -84,10 +94,10 @@ func copyFileToHogejpg(file *multipart.File) error {
 
 }
 
-func sendImge2s3(file *multipart.File, fileName string) (string, error) {
+func sendImge2s3(file *multipart.File, fileName string) (string,string, error) {
 	sess, err := createNewAWSsession()
 	if err != nil {
-		return "", errors.Wrap(err, "not send...")
+		return "", "",errors.Wrap(err, "not send...")
 	}
 	uploader := s3manager.NewUploader(sess)
 	acl := "public-read"
@@ -99,7 +109,7 @@ func sendImge2s3(file *multipart.File, fileName string) (string, error) {
 		ACL:    &acl,
 	})
 
-	return uploadOut.UploadID, nil
+	return uploadOut.UploadID, uuid,nil
 }
 
 //CreateNewAWSsession is constracotr
