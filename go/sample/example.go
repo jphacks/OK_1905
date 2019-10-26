@@ -18,7 +18,13 @@ func main() {
 
 	r.POST("/upload", func(c *gin.Context) {
 
-		file, _ := c.FormFile("hametsu_image")
+		file, err := c.FormFile("hametsu_image")
+
+		if err != nil {
+			log.Fatal(err)
+			c.String(http.StatusBadRequest, "failed...")
+		}
+
 		log.Println(file.Filename)
 
 		c.String(http.StatusOK, "hoge")
