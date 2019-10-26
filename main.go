@@ -2,19 +2,21 @@ package main
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"io"
 	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 )
+
 const bucket string = "jogo-jphack2019"
 
 func main() {
@@ -45,7 +47,14 @@ func main() {
 			c.String(http.StatusBadRequest, fmt.Sprint(url))
 			return
 		}
-		c.String(http.StatusOK, fmt.Sprint(url))
+		c.Request.URL.Path = "/test"
+		c.Request.Method = http.MethodGet
+		r.HandleContext(c)
+
+	})
+
+	r.GET("/test", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "hametsu.tmpl", nil)
 	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
@@ -65,7 +74,7 @@ func copyFileToHogejpg(file *multipart.File) error {
 
 }
 
-func sendImge2s3(file *multipart.File,fileName string) (string, error) {
+func sendImge2s3(file *multipart.File, fileName string) (string, error) {
 	sess, err := createNewAWSsession()
 	if err != nil {
 		return "", errors.Wrap(err, "not send...")
@@ -74,9 +83,9 @@ func sendImge2s3(file *multipart.File,fileName string) (string, error) {
 	acl := "public-read"
 	uploadOut, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(bucket),
-		Key: aws.String(fileName),
-		Body: *file,
-		ACL: &acl,
+		Key:    aws.String(fileName),
+		Body:   *file,
+		ACL:    &acl,
 	})
 
 	return uploadOut.UploadID, nil
