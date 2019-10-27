@@ -171,12 +171,12 @@ func send2Py(uuid string) (*http.Response, error) {
 	pyURL := os.Getenv("PY_URL")
 
 	pystr := new(Send2PySTR)
-	urlstr := fmt.Sprint("https://jogo-jphack2019.s3.amazonaws.com/%s.jpg", uuid)
+	urlstr := fmt.Sprintf("https://jogo-jphack2019.s3.amazonaws.com/%s.jpg", uuid)
 	pystr.URL = urlstr
-	sample_json, _ := json.Marshal(pystr)
+	sampleJson, _ := json.Marshal(pystr)
 
 	//resp, err := http.DefaultClient.Do(req)yst
-	res, err := http.Post(pyURL, "application/json", bytes.NewBuffer(sample_json))
+	res, err := http.Post(pyURL, "application/json", bytes.NewBuffer(sampleJson))
 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed send2py")
