@@ -71,25 +71,36 @@ func main() {
 	r.GET("/hametsu", func(c *gin.Context) {
 		urlUUID := c.Query("uuid")
 		c.HTML(http.StatusOK, "not-hametsu.tmpl", gin.H{
-			"s3url":   urls[urlUUID],
-			"title":   "hametsu",
-			"hametsu": "破滅",
+			"s3url":    urls[urlUUID],
+			"title":    "hametsu",
+			"hametsu":  "破滅",
+			"harakiri": true,
 		})
 	})
 	r.GET("/not-hametsu", func(c *gin.Context) {
 		log.Print(urls["jogo"])
 		urlUUID := c.Query("uuid")
 		c.HTML(http.StatusOK, "not-hametsu.tmpl", gin.H{
-			"s3url":   urls[urlUUID],
-			"title":   "not hametsu",
-			"hametsu": "not 破",
+			"s3url":    urls[urlUUID],
+			"title":    "not hametsu",
+			"hametsu":  "not 破",
+			"harakiri": false,
 		})
 	})
 	r.GET("/test", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "not-hametsu.tmpl", gin.H{
-			"s3url": "https://jogo-jphack2019.s3.amazonaws.com/0dd11cca-9ce2-40d0-aea4-921c31dcdc35.jpg",
-			"title":   "not hametsu",
-			"hametsu": "not 破",
+			"s3url":    "https://jogo-jphack2019.s3.amazonaws.com/0dd11cca-9ce2-40d0-aea4-921c31dcdc35.jpg",
+			"title":    "not hametsu",
+			"hametsu":  "not 破",
+			"harakiri": true,
+		})
+	})
+	r.GET("/test2", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "not-hametsu.tmpl", gin.H{
+			"s3url":    "https://jogo-jphack2019.s3.amazonaws.com/0dd11cca-9ce2-40d0-aea4-921c31dcdc35.jpg",
+			"title":    "not hametsu",
+			"hametsu":  "not 破",
+			"harakiri": false,
 		})
 	})
 
