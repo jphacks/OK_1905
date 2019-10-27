@@ -5,7 +5,39 @@ img{
   }
   
   /* 高さに対して、幅は自動調整の場合 */
-  img{
-    width: auto;
-    height: 200px;
-  }
+img{
+  width: auto;
+  height: 200px;
+}
+
+.animation {
+  /*
+  animation-name: hametsu-anime;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-delay: 0s;
+  animation-iteration-count: infinite;
+  animation-direction: none;
+  animation-fill-mode: forwards;
+  */
+  animation-name: hametsu-anime;
+  animation-duration: 5s;
+/*
+  animation-timing-function: linear;
+  animation-delay: 0s;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-fill-mode: forwards;
+*/
+}
+
+@keyframes hametsu-anime {
+    from {
+        opacity:0;
+        width:200px;
+    }
+    to {
+        opacity:1;
+        width:200px;
+    }
+}

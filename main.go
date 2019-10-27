@@ -36,9 +36,9 @@ func main() {
 
 	r.POST("/upload", func(c *gin.Context) {
 
-		file_header, _ := c.FormFile("hametsu_image")
-		log.Println(file_header.Filename)
-		file, err := file_header.Open()
+		fileHeader, _ := c.FormFile("hametsu_image")
+		log.Println(fileHeader.Filename)
+		file, err := fileHeader.Open()
 		if err != nil {
 			log.Println(err)
 			c.String(http.StatusBadRequest, "foo")
@@ -46,7 +46,7 @@ func main() {
 		}
 
 		//err = copyFileToHogejpg(&file)
-		url, uuid, err := sendImge2s3(&file, file_header.Filename)
+		url, uuid, err := sendImge2s3(&file, fileHeader.Filename)
 
 		if err != nil {
 			log.Println(err)
@@ -85,6 +85,14 @@ func main() {
 			"hametsu": "not 破",
 		})
 	})
+	r.GET("/test", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "not-hametsu.tmpl", gin.H{
+			"s3url": "https://jogo-jphack2019.s3.amazonaws.com/0dd11cca-9ce2-40d0-aea4-921c31dcdc35.jpg",
+			"title":   "not hametsu",
+			"hametsu": "not 破",
+		})
+	})
+
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
