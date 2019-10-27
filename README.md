@@ -1,6 +1,6 @@
 # 破滅 ヨシッ! 
 
-[![Product Name](image.png)](https://jogo-jphack2019.s3.amazonaws.com/0dd11cca-9ce2-40d0-aea4-921c31dcdc35.jpg)
+[![Product Name](https://jogo-jphack2019.s3.amazonaws.com/0dd11cca-9ce2-40d0-aea4-921c31dcdc35.jpg)]
 
 ## 製品概要
 破滅してるか破滅してないかの判断を行う
@@ -39,7 +39,7 @@
 今回スポンサーから提供されたAPI、製品などの外部技術があれば記述をして下さい。
 
 * AWS S3
-* (heroku)
+* (herok))
 
 #### フレームワーク・ライブラリ・モジュール
 * 処理サーバー Golang
