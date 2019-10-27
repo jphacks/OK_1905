@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -48,7 +49,7 @@ func main() {
 
 		//err = copyFileToHogejpg(&file)
 		uuid := uuid.New().String()
-		res, err := send2Py(&file)
+		res, err := send2Py(uuid)
 
 		if err != nil {
 			log.Println(err)
@@ -162,34 +163,23 @@ func createNewAWSsession() (*session.Session, error) {
 	return sess, nil
 }
 
-func send2Py(file *multipart.File) (*http.Response, error) {
+type Send2PySTR struct {
+	URL string `json: "url"`
+}
+
+func send2Py(uuid string) (*http.Response, error) {
 	pyURL := os.Getenv("PY_URL")
-	var buf bytes.Buffer
 
-	w := multipart.NewWriter(&buf)
+	pystr := new(Send2PySTR)
+	urlstr := fmt.Sprint("https://jogo-jphack2019.s3.amazonaws.com/%s.jpg", uuid)
+	pystr.URL = urlstr
+	sample_json, _ := json.Marshal(pystr)
 
-	fw, err := w.CreateFormFile("file", "file")
-	if err != nil {
-		return nil, err
-	}
-	if _, err = io.Copy(fw, *file); err != nil {
-		return nil, err
-	}
-	w.Close()
-
-	req, err := http.NewRequest(http.MethodPost, pyURL, &buf)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", w.FormDataContentType())
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
+	//resp, err := http.DefaultClient.Do(req)yst
+	res, err := http.Post(pyURL, "application/json", bytes.NewBuffer(sample_json))
 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed send2py")
 	}
-	return resp, nil
+	return res, nil
 }
