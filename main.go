@@ -87,7 +87,7 @@ func main() {
 	})
 	r.GET("/test", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "not-hametsu.tmpl", gin.H{
-			"s3url":   "https://jogo-jphack2019.s3.amazonaws.com/96c3fb3c-a5d9-420e-988c-f15ad87b1949.jpg",
+			"s3url": "https://jogo-jphack2019.s3.amazonaws.com/0dd11cca-9ce2-40d0-aea4-921c31dcdc35.jpg",
 			"title":   "not hametsu",
 			"hametsu": "not 破",
 		})
