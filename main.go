@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -163,9 +164,29 @@ func createNewAWSsession() (*session.Session, error) {
 
 func send2Py(file *multipart.File) (*http.Response, error) {
 	pyURL := os.Getenv("PY_URL")
-	res, err := http.Post(pyURL, "file", *file)
+	body := &bytes.Buffer{}
+
+	// データのmultipartエンコーディングを管理するmultipart.Writerを生成する。
+	// ランダムなbase-16バウンダリが生成される。
+	mw := multipart.NewWriter(body)
+
+	// ファイルに使うパートを生成する。
+	// ヘッダ以外はデータは書き込まれない。
+	// fieldnameとfilenameの値がヘッダに含められる。
+	// ファイルデータを書き込むio.Writerが返却される。
+	fw, err := mw.CreateFormFile("file", "file")
+
+	// fwで作ったパートにファイルのデータを書き込む
+	_, err = io.Copy(fw, *file)
+	// リクエストのContent-Typeヘッダに使う値を取得する（バウンダリを含む）
+	contentType := mw.FormDataContentType()
+
+	// 書き込みが終わったので最終のバウンダリを入れる
+	err = mw.Close()
+	resp, err := http.Post(pyURL, contentType, body)
+
 	if err != nil {
 		return nil, errors.Wrap(err, "failed send2py")
 	}
-	return res, nil
+	return resp, nil
 }
