@@ -1,6 +1,6 @@
 # 破滅 ヨシッ! 
 
-[![Product Name](https://jogo-jphack2019.s3.amazonaws.com/0dd11cca-9ce2-40d0-aea4-921c31dcdc35.jpg)]
+![0dd11cca-9ce2-40d0-aea4-921c31dcdc35 (1)](https://user-images.githubusercontent.com/30275825/67629352-a3a95d00-f8b7-11e9-83d1-c110eaabaf4a.jpg)
 
 ## 製品概要
 破滅してるか破滅してないかの判断を行う
