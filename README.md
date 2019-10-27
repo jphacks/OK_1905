@@ -1,6 +1,6 @@
 # 破滅 ヨシッ! 
 
-[![Product Name](image.png)](https://www.youtube.com/watch?v=G5rULR53uMk)
+[![Product Name](image.png)](https://jogo-jphack2019.s3.amazonaws.com/0dd11cca-9ce2-40d0-aea4-921c31dcdc35.jpg)
 
 ## 製品概要
 破滅してるか破滅してないかの判断を行う
