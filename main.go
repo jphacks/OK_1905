@@ -164,26 +164,29 @@ func createNewAWSsession() (*session.Session, error) {
 
 func send2Py(file *multipart.File) (*http.Response, error) {
 	pyURL := os.Getenv("PY_URL")
-	body := &bytes.Buffer{}
+	var buf bytes.Buffer
 
-	// データのmultipartエンコーディングを管理するmultipart.Writerを生成する。
-	// ランダムなbase-16バウンダリが生成される。
-	mw := multipart.NewWriter(body)
+	w := multipart.NewWriter(&buf)
 
-	// ファイルに使うパートを生成する。
-	// ヘッダ以外はデータは書き込まれない。
-	// fieldnameとfilenameの値がヘッダに含められる。
-	// ファイルデータを書き込むio.Writerが返却される。
-	fw, err := mw.CreateFormFile("file", "file")
+	fw, err := w.CreateFormFile("file", "file")
+	if err != nil {
+		return nil, err
+	}
+	if _, err = io.Copy(fw, *file); err != nil {
+		return nil, err
+	}
+	w.Close()
 
-	// fwで作ったパートにファイルのデータを書き込む
-	_, err = io.Copy(fw, *file)
-	// リクエストのContent-Typeヘッダに使う値を取得する（バウンダリを含む）
-	contentType := mw.FormDataContentType()
+	req, err := http.NewRequest(http.MethodPost, pyURL, &buf)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", w.FormDataContentType())
 
-	// 書き込みが終わったので最終のバウンダリを入れる
-	err = mw.Close()
-	resp, err := http.Post(pyURL, contentType, body)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed send2py")
