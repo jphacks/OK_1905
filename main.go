@@ -46,7 +46,15 @@ func main() {
 		}
 
 		//err = copyFileToHogejpg(&file)
-		url, uuid, err := sendImge2s3(&file, fileHeader.Filename)
+		uuid := uuid.New().String()
+		res, err := send2Py(&file)
+
+		if err != nil {
+			log.Println(err)
+			log.Println(res)
+			return
+		}
+		url, err := sendImge2s3(&file, fileHeader.Filename, uuid)
 
 		if err != nil {
 			log.Println(err)
@@ -122,14 +130,13 @@ func copyFileToHogejpg(file *multipart.File) error {
 
 }
 
-func sendImge2s3(file *multipart.File, fileName string) (string, string, error) {
+func sendImge2s3(file *multipart.File, fileName string, uuid string) (string, error) {
 	sess, err := createNewAWSsession()
 	if err != nil {
-		return "", "", errors.Wrap(err, "not send...")
+		return "", errors.Wrap(err, "not send...")
 	}
 	uploader := s3manager.NewUploader(sess)
 	acl := "public-read"
-	uuid := uuid.New().String()
 	uploadOut, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(fmt.Sprintf("%s.jpg", uuid)),
@@ -137,7 +144,7 @@ func sendImge2s3(file *multipart.File, fileName string) (string, string, error) 
 		ACL:    &acl,
 	})
 
-	return uploadOut.UploadID, uuid, nil
+	return uploadOut.UploadID, nil
 }
 
 //CreateNewAWSsession is constracotr
@@ -152,4 +159,13 @@ func createNewAWSsession() (*session.Session, error) {
 		return nil, errors.Wrap(err, "creating failed")
 	}
 	return sess, nil
+}
+
+func send2Py(file *multipart.File) (*http.Response, error) {
+	pyURL := os.Getenv("PY_URL")
+	res, err := http.Post(pyURL, "file", *file)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed send2py")
+	}
+	return res, nil
 }
