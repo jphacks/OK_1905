@@ -11,25 +11,9 @@ import time
 import urllib.error
 import urllib.request
 
-
-#from client_byRAW import * 
-
-# def download_file_to_dir(url, dst_dir):
-#     download_file(url, os.path.join(dst_dir, os.path.basename(url)))
-
-# dst_dir = './images'
-# if not os.path.isdir(dst_dir):
-#     os.mkdir(dst_dir)
-# download_file_to_dir(url, dst_dir)
-
-SAVE_DIR = "./images"
-if not os.path.isdir(SAVE_DIR):
-    os.mkdir(SAVE_DIR)
-
 app = Flask(__name__, static_url_path="")
 
-def random_str(n):
-    return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(n)])
+
 
 @app.route('/')
 def index():
@@ -39,26 +23,24 @@ def index():
 def send_js(path):
     return send_from_directory(SAVE_DIR, path)
 
-# 参考: https://qiita.com/yuuuu3/items/6e4206fdc8c83747544b
+# postで画像受け取り
 @app.route('/upload', methods=['POST'])
-def upload():
-    if request.files['image']:
-        # 画像として読み込み
-        stream = request.files['image'].stream
-        img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
-        img = cv2.imdecode(img_array, 1)
+def post_json():
+  json = request.get_json()  # Get POST JSON
+  jsimg = json['image']
+  img_array = np.asarray(bytearray(jsimg.read()), dtype=np.uint8)
+  img = cv2.imdecode(img_array, 1)
+  # 変換
+  img = canny(img)
+  # 返す  
+  result = {
+    "data": {
+      "image": img
+      }
+    }
+  return jsonify(result)
 
-        # 変換
-        img = canny(img)
 
-        # 保存
-        dt_now = datetime.now().strftime("%Y_%m_%d%_H_%M_%S_") + random_str(5)
-        save_path = os.path.join(SAVE_DIR, dt_now + ".png")
-        cv2.imwrite(save_path, img)
-
-        print("save", save_path)
-
-        return redirect('/')
 
 if __name__ == '__main__':
     app.debug = True
